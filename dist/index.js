@@ -66,78 +66,81 @@ exports.enableLoupe = function (target, imgUrl, loupe) {
         Object.assign(loupe.elem.style, { display: "block", visibility: "hidden" });
         var exitDistance = 5;
         var zoomingImg = document.createElement('img');
-        zoomingImg.src = imgUrl;
         var targetRect = target.getBoundingClientRect();
-        var width = zoomingImg.width;
-        var height = zoomingImg.height;
-        // left and top copied from jQuery $(offset)
-        // https://j11y.io/jquery/#v=1.11.2&fn=jQuery.fn.offset
-        var left = targetRect.left + ((wnd === null || wnd === void 0 ? void 0 : wnd.pageXOffset) || doc.documentElement.scrollLeft) - (doc.documentElement.clientLeft || 0);
-        var top = targetRect.top + ((wnd === null || wnd === void 0 ? void 0 : wnd.pageYOffset) || doc.documentElement.scrollTop) - (doc.documentElement.clientTop || 0);
-        var right = left + targetRect.width;
-        var bottom = top + targetRect.height;
-        Object.assign(loupe.elem.style, {
-            backgroundSize: width * loupe.magnification + 'px ' + height * loupe.magnification + "px",
-            backgroundImage: 'url("' + imgUrl + '")',
-            width: loupe.width,
-            height: loupe.height
-        });
-        if (loupe.shape === "circle") {
-            Object.assign(loupe.elem.style, { borderRadius: "50%" });
-        }
-        var loupeOffset = loupe.elem.getBoundingClientRect().width / 2;
-        moveHandlers.docMouseMoveHandler = function (e) {
-            if (e.pageX < left - exitDistance ||
-                e.pageX > right + exitDistance ||
-                e.pageY < top - exitDistance ||
-                e.pageY > bottom + exitDistance) {
-                stopMouseMove();
-                return;
-            }
-            Object.assign(loupe.elem.style, { display: "block", visibility: "visible" });
-            var positionX = -e.pageX + left;
-            var percentX = positionX * 100 / targetRect.width;
-            var zoomingPercentX = width * loupe.magnification * percentX / 100 + loupeOffset;
-            var positionY = -e.pageY + top;
-            var percentY = positionY * 100 / targetRect.height;
-            var zoomingPercentY = height * loupe.magnification * percentY / 100 + loupeOffset;
-            var bgPosX = zoomingPercentX;
-            var bgPosY = zoomingPercentY;
+        zoomingImg.onload = function () {
+            var width = zoomingImg.width;
+            var height = zoomingImg.height;
+            // left and top copied from jQuery $(offset)
+            // https://j11y.io/jquery/#v=1.11.2&fn=jQuery.fn.offset
+            var left = targetRect.left + ((wnd === null || wnd === void 0 ? void 0 : wnd.pageXOffset) || doc.documentElement.scrollLeft) - (doc.documentElement.clientLeft || 0);
+            var top = targetRect.top + ((wnd === null || wnd === void 0 ? void 0 : wnd.pageYOffset) || doc.documentElement.scrollTop) - (doc.documentElement.clientTop || 0);
+            var right = left + targetRect.width;
+            var bottom = top + targetRect.height;
             Object.assign(loupe.elem.style, {
-                left: px(e.pageX - loupeOffset),
-                top: px(e.pageY - loupeOffset),
-                backgroundPosition: px(bgPosX) + " " + px(bgPosY)
+                backgroundSize: width * loupe.magnification + 'px ' + height * loupe.magnification + "px",
+                backgroundImage: 'url("' + imgUrl + '")',
+                width: loupe.width,
+                height: loupe.height
             });
-        };
-        moveHandlers.docTouchMoveHandler = function (e) {
-            var t = e.touches.item(0);
-            if (!t) {
-                return;
+            if (loupe.shape === "circle") {
+                Object.assign(loupe.elem.style, { borderRadius: "50%" });
             }
-            if (t.pageX < left - exitDistance ||
-                t.pageX > right + exitDistance ||
-                t.pageY < top - exitDistance ||
-                t.pageY > bottom + exitDistance) {
-                stopTouchMove();
-                return;
-            }
-            Object.assign(loupe.elem.style, { display: "block", visibility: "visible" });
-            var positionX = -t.pageX + left;
-            var percentX = positionX * 100 / targetRect.width;
-            var zoomingPercentX = width * loupe.magnification * percentX / 100 + loupeOffset;
-            var positionY = -t.pageY + top;
-            var percentY = positionY * 100 / targetRect.height;
-            var zoomingPercentY = height * loupe.magnification * percentY / 100 + loupeOffset;
-            var bgPosX = zoomingPercentX;
-            var bgPosY = zoomingPercentY;
-            Object.assign(loupe.elem.style, {
-                left: px(t.pageX - loupeOffset),
-                top: px(t.pageY - loupeOffset),
-                backgroundPosition: px(bgPosX) + " " + px(bgPosY)
-            });
+            var loupeOffset = loupe.elem.getBoundingClientRect().width / 2;
+            moveHandlers.docMouseMoveHandler = function (e) {
+                if (e.pageX < left - exitDistance ||
+                    e.pageX > right + exitDistance ||
+                    e.pageY < top - exitDistance ||
+                    e.pageY > bottom + exitDistance) {
+                    stopMouseMove();
+                    return;
+                }
+                Object.assign(loupe.elem.style, { display: "block", visibility: "visible" });
+                var positionX = -e.pageX + left;
+                var percentX = positionX * 100 / targetRect.width;
+                var zoomingPercentX = width * loupe.magnification * percentX / 100 + loupeOffset;
+                var positionY = -e.pageY + top;
+                var percentY = positionY * 100 / targetRect.height;
+                var zoomingPercentY = height * loupe.magnification * percentY / 100 + loupeOffset;
+                var bgPosX = zoomingPercentX;
+                var bgPosY = zoomingPercentY;
+                Object.assign(loupe.elem.style, {
+                    left: px(e.pageX - loupeOffset),
+                    top: px(e.pageY - loupeOffset),
+                    backgroundPosition: px(bgPosX) + " " + px(bgPosY)
+                });
+            };
+            moveHandlers.docTouchMoveHandler = function (e) {
+                var t = e.touches.item(0);
+                if (!t) {
+                    return;
+                }
+                if (t.pageX < left - exitDistance ||
+                    t.pageX > right + exitDistance ||
+                    t.pageY < top - exitDistance ||
+                    t.pageY > bottom + exitDistance) {
+                    stopTouchMove();
+                    return;
+                }
+                Object.assign(loupe.elem.style, { display: "block", visibility: "visible" });
+                var positionX = -t.pageX + left;
+                var percentX = positionX * 100 / targetRect.width;
+                var zoomingPercentX = width * loupe.magnification * percentX / 100 + loupeOffset;
+                var positionY = -t.pageY + top;
+                var percentY = positionY * 100 / targetRect.height;
+                var zoomingPercentY = height * loupe.magnification * percentY / 100 + loupeOffset;
+                var bgPosX = zoomingPercentX;
+                var bgPosY = zoomingPercentY;
+                Object.assign(loupe.elem.style, {
+                    left: px(t.pageX - loupeOffset),
+                    top: px(t.pageY - loupeOffset),
+                    backgroundPosition: px(bgPosX) + " " + px(bgPosY)
+                });
+            };
+            doc.addEventListener("mousemove", moveHandlers.docMouseMoveHandler);
+            doc.addEventListener("touchmove", moveHandlers.docTouchMoveHandler);
         };
-        doc.addEventListener("mousemove", moveHandlers.docMouseMoveHandler);
-        doc.addEventListener("touchmove", moveHandlers.docTouchMoveHandler);
+        // start loading
+        zoomingImg.src = imgUrl;
     };
     target.addEventListener("mouseover", handler);
     target.addEventListener("touchstart", handler);
