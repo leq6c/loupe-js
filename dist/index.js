@@ -49,14 +49,20 @@ exports.enableLoupe = function (target, imgUrl, loupe) {
     };
     var stopMouseMove = function () {
         if (moveHandlers.docMouseMoveHandler !== undefined) {
-            Object.assign(loupe.elem.style, { display: "none", visibility: "hidden" });
+            Object.assign(loupe.elem.style, {
+                display: "none",
+                visibility: "hidden",
+            });
             doc.removeEventListener("mousemove", moveHandlers.docMouseMoveHandler);
             moveHandlers.docMouseMoveHandler = undefined;
         }
     };
     var stopTouchMove = function () {
         if (moveHandlers.docTouchMoveHandler !== undefined) {
-            Object.assign(loupe.elem.style, { display: "none", visibility: "hidden" });
+            Object.assign(loupe.elem.style, {
+                display: "none",
+                visibility: "hidden",
+            });
             doc.removeEventListener("touchmove", moveHandlers.docTouchMoveHandler);
             moveHandlers.docTouchMoveHandler = undefined;
         }
@@ -65,27 +71,35 @@ exports.enableLoupe = function (target, imgUrl, loupe) {
         Object.assign(target.style, { cursor: "none" });
         Object.assign(loupe.elem.style, { display: "block", visibility: "hidden" });
         var exitDistance = 5;
-        var zoomingImg = document.createElement('img');
+        var zoomingImg = document.createElement("img");
         var targetRect = target.getBoundingClientRect();
         zoomingImg.onload = function () {
             var width = zoomingImg.width;
             var height = zoomingImg.height;
             // left and top copied from jQuery $(offset)
             // https://j11y.io/jquery/#v=1.11.2&fn=jQuery.fn.offset
-            var left = targetRect.left + ((wnd === null || wnd === void 0 ? void 0 : wnd.pageXOffset) || doc.documentElement.scrollLeft) - (doc.documentElement.clientLeft || 0);
-            var top = targetRect.top + ((wnd === null || wnd === void 0 ? void 0 : wnd.pageYOffset) || doc.documentElement.scrollTop) - (doc.documentElement.clientTop || 0);
+            var left = targetRect.left +
+                ((wnd === null || wnd === void 0 ? void 0 : wnd.pageXOffset) || doc.documentElement.scrollLeft) -
+                (doc.documentElement.clientLeft || 0);
+            var top = targetRect.top +
+                ((wnd === null || wnd === void 0 ? void 0 : wnd.pageYOffset) || doc.documentElement.scrollTop) -
+                (doc.documentElement.clientTop || 0);
             var right = left + targetRect.width;
             var bottom = top + targetRect.height;
             Object.assign(loupe.elem.style, {
-                backgroundSize: width * loupe.magnification + 'px ' + height * loupe.magnification + "px",
+                backgroundSize: width * loupe.magnification +
+                    "px " +
+                    height * loupe.magnification +
+                    "px",
                 backgroundImage: 'url("' + imgUrl + '")',
                 width: loupe.width,
-                height: loupe.height
+                height: loupe.height,
             });
             if (loupe.shape === "circle") {
                 Object.assign(loupe.elem.style, { borderRadius: "50%" });
             }
-            var loupeOffset = loupe.elem.getBoundingClientRect().width / 2;
+            var loupeOffsetX = loupe.elem.getBoundingClientRect().width / 2;
+            var loupeOffsetY = loupe.elem.getBoundingClientRect().height / 2;
             moveHandlers.docMouseMoveHandler = function (e) {
                 if (e.pageX < left - exitDistance ||
                     e.pageX > right + exitDistance ||
@@ -94,19 +108,22 @@ exports.enableLoupe = function (target, imgUrl, loupe) {
                     stopMouseMove();
                     return;
                 }
-                Object.assign(loupe.elem.style, { display: "block", visibility: "visible" });
+                Object.assign(loupe.elem.style, {
+                    display: "block",
+                    visibility: "visible",
+                });
                 var positionX = -e.pageX + left;
-                var percentX = positionX * 100 / targetRect.width;
-                var zoomingPercentX = width * loupe.magnification * percentX / 100 + loupeOffset;
+                var percentX = (positionX * 100) / targetRect.width;
+                var zoomingPercentX = (width * loupe.magnification * percentX) / 100 + loupeOffsetX;
                 var positionY = -e.pageY + top;
-                var percentY = positionY * 100 / targetRect.height;
-                var zoomingPercentY = height * loupe.magnification * percentY / 100 + loupeOffset;
+                var percentY = (positionY * 100) / targetRect.height;
+                var zoomingPercentY = (height * loupe.magnification * percentY) / 100 + loupeOffsetY;
                 var bgPosX = zoomingPercentX;
                 var bgPosY = zoomingPercentY;
                 Object.assign(loupe.elem.style, {
-                    left: px(e.pageX - loupeOffset),
-                    top: px(e.pageY - loupeOffset),
-                    backgroundPosition: px(bgPosX) + " " + px(bgPosY)
+                    left: px(e.pageX - loupeOffsetX),
+                    top: px(e.pageY - loupeOffsetY),
+                    backgroundPosition: px(bgPosX) + " " + px(bgPosY),
                 });
             };
             moveHandlers.docTouchMoveHandler = function (e) {
@@ -121,19 +138,22 @@ exports.enableLoupe = function (target, imgUrl, loupe) {
                     stopTouchMove();
                     return;
                 }
-                Object.assign(loupe.elem.style, { display: "block", visibility: "visible" });
+                Object.assign(loupe.elem.style, {
+                    display: "block",
+                    visibility: "visible",
+                });
                 var positionX = -t.pageX + left;
-                var percentX = positionX * 100 / targetRect.width;
-                var zoomingPercentX = width * loupe.magnification * percentX / 100 + loupeOffset;
+                var percentX = (positionX * 100) / targetRect.width;
+                var zoomingPercentX = (width * loupe.magnification * percentX) / 100 + loupeOffsetX;
                 var positionY = -t.pageY + top;
-                var percentY = positionY * 100 / targetRect.height;
-                var zoomingPercentY = height * loupe.magnification * percentY / 100 + loupeOffset;
+                var percentY = (positionY * 100) / targetRect.height;
+                var zoomingPercentY = (height * loupe.magnification * percentY) / 100 + loupeOffsetY;
                 var bgPosX = zoomingPercentX;
                 var bgPosY = zoomingPercentY;
                 Object.assign(loupe.elem.style, {
-                    left: px(t.pageX - loupeOffset),
-                    top: px(t.pageY - loupeOffset),
-                    backgroundPosition: px(bgPosX) + " " + px(bgPosY)
+                    left: px(t.pageX - loupeOffsetX),
+                    top: px(t.pageY - loupeOffsetY),
+                    backgroundPosition: px(bgPosX) + " " + px(bgPosY),
                 });
             };
             doc.addEventListener("mousemove", moveHandlers.docMouseMoveHandler);
@@ -155,5 +175,7 @@ exports.enableLoupe = function (target, imgUrl, loupe) {
 var disableTouchScroll = function (elem) {
     var old = elem.style.touchAction;
     Object.assign(elem.style, { touchAction: "none" }); // https://stackoverflow.com/a/43275544/3309046
-    return function () { Object.assign(elem.style, { touchAction: old }); };
+    return function () {
+        Object.assign(elem.style, { touchAction: old });
+    };
 };
